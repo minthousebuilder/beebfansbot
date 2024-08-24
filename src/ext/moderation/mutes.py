@@ -16,18 +16,18 @@ time_dict = {"h": 3600, "s": 1, "m": 60, "d": 86400}
 @discord.app_commands.guild_only()
 @discord.app_commands.describe(
     user="The user to mute.",
-    content="The reason for the mute.",
+    reason="The reason for the mute.",
     length="How long to mute the user. (Use 2d 10h 3m 2s format!)",
-    proof="Any proof you'd like to add on to the mute. Ex: Message links",
+    evidence="Any proof you'd like to add on to the mute. Ex: Message links",
     rule="If a rule was violated, what rule was it?",
     dm="Whether or not to DM the user about this mute. Defaults to True.",
 )
 async def add_mute(
     interaction: discord.Interaction,
     user: discord.Member,
-    content: str,
+    reason: str,
     length: str,
-    proof: str = None,
+    evidence: str = None,
     rule: int = None,
     dm: bool = True,
 ):
@@ -64,8 +64,8 @@ async def add_mute(
 
         created = ModerationMute.create(
             user_id=user.id,
-            content=content,
-            proof=proof,
+            content=reason,
+            proof=evidence,
             created_by=interaction.user.id,
             created_at=int(datetime.now().timestamp()),
             rule=rule,
@@ -74,18 +74,18 @@ async def add_mute(
         # embeds
         conf_embed = discord.Embed(
             title=f"{user.name} has been muted.",
-            description=f"> **Content:** {content}\n> **ID:** {created.id}",
+            description=f"> **Reason:** {content}\n> **ID:** {created.id}",
         )
 
         dm_embed = discord.Embed(
             title=f"You've been warned in BBC Fans.",
-            description=f"> **Content:** {content}",
+            description=f"> **Reason:** {content}",
         )
 
         if proof:
-            conf_embed.description = conf_embed.description + f"\n> **Proof:** {proof}"
+            conf_embed.description = conf_embed.description + f"\n> **Evidence:** {proof}"
         if rule:
-            conf_embed.description = conf_embed.description + f"\n> **Rule:** {rule}"
+            conf_embed.description = conf_embed.description + f"\n> **Evidence:** {rule}"
             dm_embed.description = dm_embed.description + f"\n> **Rule:** {rule}"
 
         # mute the user
@@ -190,19 +190,19 @@ async def mute_info(interaction: discord.Interaction, mute_id: int):
             e = discord.Embed(title=f"Mute {mute_id}")
 
             e.add_field(
-                name="On",
+                name="User",
                 value=f"{interaction.client.get_user(q.user_id).mention}",
                 inline=False,
             )
-            e.add_field(name="Content", value=f"{q.content}", inline=False)
-            e.add_field(name="Proof", value=f"{q.proof}", inline=False)
+            e.add_field(name="Reason", value=f"{q.content}", inline=False)
+            e.add_field(name="Evidence", value=f"{q.proof}", inline=False)
             e.add_field(
                 name="Created By",
                 value=f"{interaction.client.get_user(q.created_by).mention}",
                 inline=False,
             )
             e.add_field(
-                name="Created At",
+                name="Created",
                 value=f"<t:{q.created_at}:F> (<t:{q.created_at}:R>)",
                 inline=False,
             )
