@@ -13,14 +13,14 @@ import peewee
 @discord.app_commands.describe(
     user="The user to add a note on to.",
     content="The content of the note.",
-    proof="Any proof you'd like to add on to the note. Ex: Message links",
+    evidence="Any proof you'd like to add on to the note. Ex: Message links",
     rule="If a rule was violated, what rule was it?",
 )
 async def add_note(
     interaction: discord.Interaction,
     user: discord.Member,
     content: str,
-    proof: str = None,
+    evidence: str = None,
     rule: int = None,
 ):
     mod_role = interaction.client.get_guild(config.server_id).get_role(
@@ -33,7 +33,7 @@ async def add_note(
         ModerationNote.create(
             user_id=user.id,
             content=content,
-            proof=proof,
+            proof=evidence,
             created_by=interaction.user.id,
             created_at=int(datetime.now().timestamp()),
             rule=rule,
@@ -43,8 +43,8 @@ async def add_note(
             title=f"Note added to {user.name}.", description=f"> **Content:** {content}"
         )
 
-        if proof:
-            e.description = e.description + f"\n> **Proof:** {proof}"
+        if evidence:
+            e.description = e.description + f"\n> **Evidence:** {proof}"
         if rule:
             e.description = e.description + f"\n> **Rule:** {rule}"
 
@@ -144,7 +144,7 @@ async def note_info(interaction: discord.Interaction, note_id: int):
                 inline=False,
             )
             e.add_field(name="Content", value=f"{q.content}", inline=False)
-            e.add_field(name="Proof", value=f"{q.proof}", inline=False)
+            e.add_field(name="Evidence", value=f"{q.proof}", inline=False)
             e.add_field(
                 name="Created By",
                 value=f"{interaction.client.get_user(q.created_by).mention}",
