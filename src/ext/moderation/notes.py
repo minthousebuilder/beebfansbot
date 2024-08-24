@@ -139,7 +139,7 @@ async def note_info(interaction: discord.Interaction, note_id: int):
             e = discord.Embed(title=f"Note {note_id}")
 
             e.add_field(
-                name="On",
+                name="User",
                 value=f"{interaction.client.get_user(q.user_id).mention}",
                 inline=False,
             )
@@ -151,7 +151,7 @@ async def note_info(interaction: discord.Interaction, note_id: int):
                 inline=False,
             )
             e.add_field(
-                name="Created At",
+                name="Created",
                 value=f"<t:{q.created_at}:F> (<t:{q.created_at}:R>)",
                 inline=False,
             )
