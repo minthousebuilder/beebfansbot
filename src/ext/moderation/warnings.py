@@ -41,16 +41,16 @@ async def add_warning(
 
         conf_embed = discord.Embed(
             title=f"{user.name} has been warned.",
-            description=f"> **Reason:** {reason}\n> **ID:** {created.id}",
+            description=f"> **Reason:** {content}\n> **ID:** {created.id}",
         )
 
         dm_embed = discord.Embed(
             title=f"You've been warned in BBC Fans.",
-            description=f"> **Reason:** {reason}",
+            description=f"> **Reason:** {content}",
         )
 
         if evidence:
-            conf_embed.description = conf_embed.description + f"\n> **Evidence:** {evidence}"
+            conf_embed.description = conf_embed.description + f"\n> **Evidence:** {proof}"
         if rule:
             conf_embed.description = conf_embed.description + f"\n> **Rule:** {rule}"
             dm_embed.description = dm_embed.description + f"\n> **Rule:** {rule}"
