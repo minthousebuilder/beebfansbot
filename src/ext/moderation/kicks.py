@@ -157,7 +157,7 @@ async def kick_info(interaction: discord.Interaction, kick_id: int):
                 inline=False,
             )
             e.add_field(
-                name="Created At",
+                name="Created",
                 value=f"<t:{q.created_at}:F> (<t:{q.created_at}:R>)",
                 inline=False,
             )
