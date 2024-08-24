@@ -10,16 +10,16 @@ import peewee
 @discord.app_commands.guild_only()
 @discord.app_commands.describe(
     user="The user to kick.",
-    content="The reason for the kick.",
-    proof="Any proof you'd like to add on to the kick. Ex: Message links",
+    reason="The reason for the kick.",
+    evidence="Any proof you'd like to add on to the kick. Ex: Message links",
     rule="If a rule was violated, what rule was it?",
     dm="Whether or not to DM the user about this kick. Defaults to True.",
 )
 async def add_kick(
     interaction: discord.Interaction,
     user: discord.Member,
-    content: str,
-    proof: str = None,
+    reason: str,
+    evidence: str = None,
     rule: int = None,
     dm: bool = True,
 ):
@@ -29,8 +29,8 @@ async def add_kick(
     if mod_role in interaction.user.roles:
         created = ModerationKick.create(
             user_id=user.id,
-            content=content,
-            proof=proof,
+            content=reason,
+            proof=evidence,
             created_by=interaction.user.id,
             created_at=int(datetime.now().timestamp()),
             rule=rule,
@@ -38,16 +38,16 @@ async def add_kick(
 
         conf_embed = discord.Embed(
             title=f"{user.name} has been kicked.",
-            description=f"> **Content:** {content}\n> **ID:** {created.id}",
+            description=f"> **Reason:** {content}\n> **ID:** {created.id}",
         )
 
         dm_embed = discord.Embed(
             title=f"You've been kicked in BBC Fans.",
-            description=f"> **Content:** {content}",
+            description=f"> **Reason:** {content}",
         )
 
         if proof:
-            conf_embed.description = conf_embed.description + f"\n> **Proof:** {proof}"
+            conf_embed.description = conf_embed.description + f"\n> **Evidence:** {proof}"
         if rule:
             conf_embed.description = conf_embed.description + f"\n> **Rule:** {rule}"
             dm_embed.description = dm_embed.description + f"\n> **Rule:** {rule}"
@@ -145,12 +145,12 @@ async def kick_info(interaction: discord.Interaction, kick_id: int):
             e = discord.Embed(title=f"Warning {kick_id}")
 
             e.add_field(
-                name="On",
+                name="User",
                 value=f"{interaction.client.get_user(q.user_id).mention}",
                 inline=False,
             )
-            e.add_field(name="Content", value=f"{q.content}", inline=False)
-            e.add_field(name="Proof", value=f"{q.proof}", inline=False)
+            e.add_field(name="Reason", value=f"{q.content}", inline=False)
+            e.add_field(name="Evidence", value=f"{q.proof}", inline=False)
             e.add_field(
                 name="Created By",
                 value=f"{interaction.client.get_user(q.created_by).mention}",
