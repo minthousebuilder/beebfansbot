@@ -10,16 +10,16 @@ import peewee
 @discord.app_commands.guild_only()
 @discord.app_commands.describe(
     user="The user to warn.",
-    content="The reason for the warning.",
-    proof="Any proof you'd like to add on to the warning. Ex: Message links",
+    reason="The reason for the warning.",
+    evidence="Any proof you'd like to add on to the warning. Ex: Message links",
     rule="If a rule was violated, what rule was it?",
     dm="Whether or not to DM the user about this warning. Defaults to True.",
 )
 async def add_warning(
     interaction: discord.Interaction,
     user: discord.Member,
-    content: str,
-    proof: str = None,
+    reason: str,
+    evidence: str = None,
     rule: int = None,
     dm: bool = True,
 ):
@@ -32,8 +32,8 @@ async def add_warning(
     if mod_role in interaction.user.roles or helper_role in interaction.user.roles:
         created = ModerationWarning.create(
             user_id=user.id,
-            content=content,
-            proof=proof,
+            content=reason,
+            proof=evidence,
             created_by=interaction.user.id,
             created_at=int(datetime.now().timestamp()),
             rule=rule,
@@ -41,16 +41,16 @@ async def add_warning(
 
         conf_embed = discord.Embed(
             title=f"{user.name} has been warned.",
-            description=f"> **Content:** {content}\n> **ID:** {created.id}",
+            description=f"> **Reason:** {reason}\n> **ID:** {created.id}",
         )
 
         dm_embed = discord.Embed(
             title=f"You've been warned in BBC Fans.",
-            description=f"> **Content:** {content}",
+            description=f"> **Reason:** {reason}",
         )
 
-        if proof:
-            conf_embed.description = conf_embed.description + f"\n> **Proof:** {proof}"
+        if evidence:
+            conf_embed.description = conf_embed.description + f"\n> **Evidence:** {evidence}"
         if rule:
             conf_embed.description = conf_embed.description + f"\n> **Rule:** {rule}"
             dm_embed.description = dm_embed.description + f"\n> **Rule:** {rule}"
@@ -154,19 +154,19 @@ async def warning_info(interaction: discord.Interaction, warning_id: int):
             e = discord.Embed(title=f"Warning {warning_id}")
 
             e.add_field(
-                name="On",
+                name="User",
                 value=f"{interaction.client.get_user(q.user_id).mention}",
                 inline=False,
             )
-            e.add_field(name="Content", value=f"{q.content}", inline=False)
-            e.add_field(name="Proof", value=f"{q.proof}", inline=False)
+            e.add_field(name="Reason", value=f"{q.content}", inline=False)
+            e.add_field(name="Evidence", value=f"{q.proof}", inline=False)
             e.add_field(
                 name="Created By",
                 value=f"{interaction.client.get_user(q.created_by).mention}",
                 inline=False,
             )
             e.add_field(
-                name="Created At",
+                name="Created",
                 value=f"<t:{q.created_at}:F> (<t:{q.created_at}:R>)",
                 inline=False,
             )
